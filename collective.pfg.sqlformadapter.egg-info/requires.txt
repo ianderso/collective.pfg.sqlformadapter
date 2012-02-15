@@ -1,4 +1,8 @@
 setuptools
+Products.PloneFormGen
+pymssql
 
 [tests]
-zope.testing
+plone.app.testing
+Products.PloneFormGen
+pymssql

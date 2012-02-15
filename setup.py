@@ -34,7 +34,7 @@ long_description = (
 
 setup(name='collective.pfg.sqlformadapter',
       version=version,
-      description="Product to insert values from the Faculty interview and Evaluation forms into MySQL",
+      description="Product to insert values from the forms into msSQL",
       long_description=long_description,
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
