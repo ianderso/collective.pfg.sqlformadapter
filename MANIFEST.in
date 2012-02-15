@@ -1,2 +1,2 @@
-recursive-include uncsom *
+recursive-include collective *
 global-exclude *pyc

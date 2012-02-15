@@ -22,7 +22,7 @@ long_description = (
     'Detailed Documentation\n'
     '**********************\n'
     + '\n' +
-    read('uncsom', 'pfgsqlformadapter', 'README.txt')
+    read('collective', 'pfg', 'sqlformadapter', 'README.txt')
     + '\n' +
     'Contributors\n'
     '************\n'
@@ -46,7 +46,7 @@ setup(name='collective.pfg.sqlformadapter',
       keywords='',
       author='',
       author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      url='https://github.com/ianderso/collective.pfg.sqlformadapter',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective', 'collective.pfg'],
