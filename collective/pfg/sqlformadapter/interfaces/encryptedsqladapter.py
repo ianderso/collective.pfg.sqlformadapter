@@ -7,7 +7,7 @@ from collective.pfg.sqlformadapter import sqlformadapterMessageFactory as _
 
 
 class IEncryptedSQLAdapter(Interface):
-    """PFG Adapter to write to an encrypted msSQL table"""
+    """PFG Adapter to write to an encrypted MySQL table"""
 
     # -*- schema definition goes here -*-
     table = schema.TextLine(
@@ -38,5 +38,11 @@ class IEncryptedSQLAdapter(Interface):
         title=_(u"Database URL"),
         required=True,
         description=_(u"The URL of the MySQl Database"),
+    )
+#
+    key = schema.TextLine(
+        title=_(u"Encryption Key"),
+        required=True,
+        description=_(u"AES Key for encrypting values"),
     )
 #

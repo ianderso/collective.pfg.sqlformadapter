@@ -16,7 +16,7 @@ from collective.pfg.sqlformadapter import sqlformadapterMessageFactory as _
 from collective.pfg.sqlformadapter.interfaces import IEncryptedSQLAdapter
 from collective.pfg.sqlformadapter.config import PROJECTNAME
 
-import pymssql
+import MySQLdb as dbapi2
 import logging
 dblog = logging.getLogger('collective.pfg.sqlformadapter.dblog')
 
@@ -78,6 +78,15 @@ EncryptedSQLAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         required=True,
     ),
 
+    atapi.StringField(
+        'key',
+        storage=atapi.AnnotationStorage(),
+        widget=atapi.StringWidget(
+            label=_(u"Encryption Key"),
+            description=_(u"AES key for encrypting values in the database"),
+        ),
+        required=True,
+    ),
 ))
 
 # Set storage on fields copied from ATContentTypeSchema, making sure
@@ -117,12 +126,12 @@ class EncryptedSQLAdapter(FormActionAdapter):
         saves data.
         """
         try:
-            dbconn = pymssql.connect (host = self.url,
+            dbconn = dbapi2.connect (host = self.url,
                 user = self.username,
                 passwd = self.password,
                 db = self.name)
             dbconn.autocommit(False)
-        except pymssql.Error, e:
+        except dbapi2.Error, e:
             dblog.error("MySQL error %d: %s"  % (e.args[0], e.args[1]))
             return
 
@@ -138,7 +147,7 @@ class EncryptedSQLAdapter(FormActionAdapter):
 
         value_strings = list()
         for v in data.values():
-            value_strings.append(dbconn.escape_string(str(v)))
+            value_strings.append("AES_ENCRYPT('%s', '%s')" % (dbconn.escape_string(str(v)), self.key))
 
         try:
             cursor = dbconn.cursor()
@@ -146,7 +155,7 @@ class EncryptedSQLAdapter(FormActionAdapter):
             cursor.execute("INSERT INTO %s (%s) VALUES (%s);" % (self.table, ", ".join([k.id for k in data.keys()]), ", ".join([v for v in value_strings])))
             dbconn.commit()
             cursor.close()
-        except pymssql.Error, e:
+        except dbapi2.Error, e:
             dbconn.rollback()
             dblog.error("Transaction aborted %d: %s" % (e.args[0], e.args[1]))
             cursor.close()
