@@ -119,7 +119,7 @@ class EncryptedSQLAdapter(FormActionAdapter):
         try:
             dbconn = pymssql.connect (host = self.url,
                 user = self.username,
-                passwd = self.password,
+                password = self.password,
                 db = self.name)
             dbconn.autocommit(False)
         except pymssql.Error, e:
