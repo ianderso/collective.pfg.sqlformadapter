@@ -116,15 +116,11 @@ class EncryptedSQLAdapter(FormActionAdapter):
         """
         saves data.
         """
-        try:
-            dbconn = pymssql.connect (host = self.url,
-                user = self.username,
-                password = self.password,
-                db = self.name)
-            dbconn.autocommit(False)
-        except pymssql.Error, e:
-            dblog.error("MySQL error %d: %s"  % (e.args[0], e.args[1]))
-            return
+        dbconn = pymssql.connect (host = self.url,
+            user = self.username,
+            password = self.password,
+            database = self.name)
+        dbconn.autocommit(False)
 
         disallowed_types = ('FormLabelField', 'FormFolder', 'FieldsetFolder',
                             'FormCaptchaField', 'FormRichLabelField',
@@ -138,18 +134,13 @@ class EncryptedSQLAdapter(FormActionAdapter):
 
         value_strings = list()
         for v in data.values():
-            value_strings.append(dbconn.escape_string(str(v)))
+            value_strings.append(str(v))
 
-        try:
-            cursor = dbconn.cursor()
-            dblog.info("INSERT INTO %s (%s) VALUES (%s);" % (self.table, ", ".join([k.id for k in data.keys()]), ", ".join([v for v in value_strings])))
-            cursor.execute("INSERT INTO %s (%s) VALUES (%s);" % (self.table, ", ".join([k.id for k in data.keys()]), ", ".join([v for v in value_strings])))
-            dbconn.commit()
-            cursor.close()
-        except pymssql.Error, e:
-            dbconn.rollback()
-            dblog.error("Transaction aborted %d: %s" % (e.args[0], e.args[1]))
-            cursor.close()
+        cursor = dbconn.cursor()
+        dblog.info("INSERT INTO %s (%s) VALUES ('%s');" % (self.table, ", ".join([k.id for k in data.keys()]), "', '".join([v for v in value_strings])))
+        cursor.execute("INSERT INTO %s (%s) VALUES ('%s');" % (self.table, ", ".join([k.id for k in data.keys()]), "', '".join([v for v in value_strings])))
+        dbconn.commit()
+        cursor.close()
 
         dbconn.close()
 
